@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -25,7 +25,7 @@ interface EvaluationData {
   rawText?: string;
 }
 
-export default function EvaluationPage() {
+function EvaluationContent() {
   const searchParams = useSearchParams()
   const candidateName = searchParams.get("name")
   const candidateRole = searchParams.get("role")
@@ -286,5 +286,17 @@ export default function EvaluationPage() {
         </Card>
       </div>
     </main>
-  )
+  );
+}
+
+export default function EvaluationPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-8 w-8 rounded-full border-4 border-t-blue-500 border-blue-200 animate-spin"></div>
+      </div>
+    }>
+      <EvaluationContent />
+    </Suspense>
+  );
 } 
