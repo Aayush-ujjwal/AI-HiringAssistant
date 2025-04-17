@@ -1,7 +1,22 @@
-import { LucideUser } from "lucide-react"
+"use client"
+
+import { useState } from "react"
+import { LucideUser, LogOut } from "lucide-react"
 import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import { LoginDialog } from "@/components/auth/login-dialog"
+import { useAuth } from "@/context/auth-context"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export function HiringAssistantHeader() {
+  const [isLoginOpen, setIsLoginOpen] = useState(false)
+  const { user, logout } = useAuth()
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
       <div className="container flex h-16 items-center px-4 sm:px-6">
@@ -21,14 +36,43 @@ export function HiringAssistantHeader() {
           </div>
         </div>
         <div className="ml-auto flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="rounded-full bg-slate-100 p-1.5 dark:bg-slate-800">
-              <LucideUser className="h-5 w-5 text-slate-600 dark:text-slate-400" />
-            </div>
-            <span className="hidden text-sm font-medium md:inline-block">Recruiter</span>
-          </div>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <LucideUser className="h-4 w-4" />
+                  <span>{user.name}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={logout} className="text-red-600">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign Out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+              onClick={() => setIsLoginOpen(true)}
+            >
+              <LucideUser className="h-4 w-4" />
+              <span>Sign In</span>
+            </Button>
+          )}
         </div>
       </div>
+
+      <LoginDialog 
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+      />
     </header>
   )
 }
